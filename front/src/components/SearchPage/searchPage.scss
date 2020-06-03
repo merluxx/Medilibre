@@ -7,15 +7,16 @@
   color: #353B3C;
 
   &-header{
-    padding: 5rem 1rem;
+    // padding: 5rem 0;
     display: flex;
     justify-content: center;
     align-items: center;
-
+    
     .searchPage-content{
+      min-height: 100vh;
       max-width: 1200px;
       background-color: #fdfdfd;
-      padding: 3rem;
+      padding:4rem 0rem;
       box-shadow: 0px 0px 71px -9px rgba(0,0,0,0.41);
       display: flex;
       flex-direction: column;
@@ -37,6 +38,7 @@
         align-items: center;
         position: relative;
         left: -10px;
+        margin-bottom: 2rem;
         
         & #loupeIcon{
           position: relative;
@@ -54,11 +56,23 @@
           padding-left: unset;
         }
     }
-    
-
-
-
-
-
   }
+}
+
+@media (min-width: 600px) {
+
+  .searchPage{
+
+    &-header{
+      padding: 5rem 0;
+    }
+
+    &-content{
+      padding:4rem 2rem !important;
+      min-height: unset !important;
+
+    }
+  }
+
+
 }

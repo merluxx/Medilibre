@@ -3,6 +3,7 @@ export const SET_APPOINTMENTS_LIST = 'SET_APPOINTMENTS_LIST';
 export const DELETE_APPOINTMENT = 'DELETE_APPOINTMENT';
 export const SET_OPEN_APPOINTMENT = 'SET_OPEN_APPOINTMENT';
 export const SET_OPEN_HISTORIC = 'SET_OPEN_HISTORIC';
+export const SET_APPOINTMENTS_PAGE_FIELDS = 'SET_APPOINTMENTS_PAGE_FIELD';
 
 export const getUserAppointments = () => ({
   type: GET_USER_APPOINTMENTS,
@@ -25,5 +26,11 @@ export const setOpenAppointment = (value) => ({
 
 export const setOpenHistoric = (value) => ({
   type: SET_OPEN_HISTORIC,
+  value,
+});
+
+export const setAppointmentsPageFields = (field, value) => ({
+  type: SET_APPOINTMENTS_PAGE_FIELDS,
+  field,
   value,
 });

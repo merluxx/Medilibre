@@ -38,25 +38,33 @@ const HomePageModal = ({
   logoutUser,
   selectedDay,
   setSelectedDay,
+  appointmentType,
+  setAppointmentType,
   appointmentDuration,
-  appointmentFrequency,
   appointmentDelay,
   futurAppointments,
   oppeningDays,
   oppeningHours,
   onlineAppointment,
-  groupSessions,
-  groupSize,
   saveFuturAppointments,
   doctorId,
   appointmentPeriod,
   setOpenRenew,
+  parameters,
+  setColor,
+  setCustomDuration,
 }) => {
   const classes = useStyles();
   const [appointments, setAppointments] = useState([]);
   const [dayList, setDayList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [time, setTime] = useState('');
+
+  useEffect(() => {
+    if (parameters.sessionType !== []) {
+      setAppointmentType(parameters.sessionType[0]);
+    }
+  }, []);
 
   useEffect(() => {
     const now = Date.parse(new Date());
@@ -68,20 +76,27 @@ const HomePageModal = ({
         'Content-Type': 'application/json',
       },
     }).then((response) => {
+      let duration;
+      if (appointmentType && appointmentType.name !== undefined) {
+        duration = appointmentType.duration;
+        setColor(appointmentType.color);
+      }
+      else {
+        duration = appointmentDuration;
+        setColor('#242a65');
+      }
+      setCustomDuration(duration);
       saveFuturAppointments(response.data);
       // objectif recuperer une liste de jours
       const currentDate = Date.now();
       const days = getNextDays(
         currentDate,
         appointmentDelay,
-        appointmentDuration,
-        appointmentFrequency,
+        duration,
         appointmentPeriod,
         response.data,
         oppeningHours,
         oppeningDays,
-        groupSessions,
-        groupSize,
       );
       setDayList(days);
       // fin de la premiere fonction
@@ -91,12 +106,9 @@ const HomePageModal = ({
         const currentDayAppointments = getDayAppointments(
           days[0],
           appointmentDelay,
-          appointmentDuration,
-          appointmentFrequency,
+          duration,
           response.data,
           oppeningHours,
-          groupSessions,
-          groupSize,
         );
         setAppointments(currentDayAppointments);
         selectCurrentAppointment(currentDayAppointments[0]);
@@ -105,7 +117,7 @@ const HomePageModal = ({
       }
       setLoading(false);
     });
-  }, []);
+  }, [appointmentType]);
 
   useEffect(() => {
     if (appointments.length > 0) {
@@ -126,25 +138,59 @@ const HomePageModal = ({
           <DialogTitle id="form-dialog-title">Selection du rendez-vous</DialogTitle>
           <DialogContent dividers>
             <div className="homePageModal-content-contentContainer">
-              {selectedDay && onlineAppointment && !loading && futurAppointments !== undefined && (
+              {parameters.sessionType.length > 0 && (
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel htmlFor="date">Objet</InputLabel>
+                <Select
+                  value={appointmentType}
+                  onChange={(event) => {
+                    setAppointmentType(event.target.value);
+                  }}
+                  label="Objet"
+                  inputProps={{
+                    name: 'date',
+                    id: 'date',
+                  }}
+                >
+                  {parameters.sessionType.map((type) => (
+                    <MenuItem value={type} key={type.name}>
+                      {type.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              )}
+              {dayList.length > 0
+              && selectedDay
+              && onlineAppointment
+              && !loading
+              && futurAppointments !== undefined
+              && (
                 <>
                   <FormControl variant="outlined" className={classes.formControl}>
                     <InputLabel htmlFor="date">Date</InputLabel>
                     <Select
                       value={selectedDay}
                       onChange={(event) => {
-                        setSelectedDay(event.target.value);
+                        let duration;
+                        if (appointmentType && appointmentType.name !== undefined) {
+                          duration = appointmentType.duration;
+                          setColor(appointmentType.color);
+                        }
+                        else {
+                          duration = appointmentDuration;
+                          setColor('#242a65');
+                        }
+                        setCustomDuration(duration);
                         const currentDayAppointments = getDayAppointments(
                           event.target.value,
                           appointmentDelay,
-                          appointmentDuration,
-                          appointmentFrequency,
+                          duration,
                           futurAppointments,
                           oppeningHours,
-                          groupSessions,
-                          groupSize,
                         );
                         setAppointments(currentDayAppointments);
+                        setSelectedDay(event.target.value);
                       }}
                       label="Date"
                       inputProps={{
@@ -166,7 +212,7 @@ const HomePageModal = ({
                       onChange={(event) => {
                         const actualDay = new Date(selectedDay);
                         setTime(event.target.value);
-                        const newAppointment = `${actualDay.getFullYear()}-${(`0${actualDay.getMonth() + 1}`).substr(-2)}-${actualDay.getDate()} ${event.target.value}`;
+                        const newAppointment = `${actualDay.getFullYear()}/${(`0${actualDay.getMonth() + 1}`).substr(-2)}/${actualDay.getDate()} ${event.target.value}`;
                         selectCurrentAppointment(new Date(newAppointment));
                       }}
                       label="Heure"
@@ -184,7 +230,7 @@ const HomePageModal = ({
                   </FormControl>
                 </>
               )}
-              {(!selectedDay || !onlineAppointment) && (
+              {(dayList.length < 1 || !selectedDay || !onlineAppointment) && (
                 <DialogContentText>
                   Aucun rendez-vous n'est disponible à la réservation pour le moment
                 </DialogContentText>
@@ -322,18 +368,20 @@ HomePageModal.propTypes = {
   ]).isRequired,
   setSelectedDay: PropTypes.func.isRequired,
   appointmentDuration: PropTypes.number.isRequired,
-  appointmentFrequency: PropTypes.number.isRequired,
   appointmentDelay: PropTypes.number.isRequired,
   futurAppointments: PropTypes.array.isRequired,
   oppeningDays: PropTypes.array.isRequired,
   oppeningHours: PropTypes.array.isRequired,
   onlineAppointment: PropTypes.bool,
-  groupSessions: PropTypes.bool.isRequired,
-  groupSize: PropTypes.number.isRequired,
   saveFuturAppointments: PropTypes.func.isRequired,
   doctorId: PropTypes.string.isRequired,
   appointmentPeriod: PropTypes.number.isRequired,
   setOpenRenew: PropTypes.func.isRequired,
+  appointmentType: PropTypes.object.isRequired,
+  parameters: PropTypes.object.isRequired,
+  setAppointmentType: PropTypes.func.isRequired,
+  setColor: PropTypes.func.isRequired,
+  setCustomDuration: PropTypes.func.isRequired,
 };
 
 HomePageModal.defaultProps = {

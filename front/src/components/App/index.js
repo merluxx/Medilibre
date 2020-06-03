@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import Analytics from 'react-router-ga';
 
 // == Import
 import Connect from 'src/containers/Connect';
@@ -18,6 +19,8 @@ import PageRouter from 'src/components/PageRouter';
 import SearchPage from 'src/containers/SearchPage';
 import Renew from 'src/containers/Renew';
 import RenewPassword from 'src/containers/RenewPassword';
+import SuscribeDoctor from 'src/containers/SuscribeDoctor';
+import New from 'src/containers/New';
 
 import { useSnackbar } from 'notistack';
 
@@ -134,21 +137,29 @@ const App = ({
       >
         <Renew />
       </Dialog>
-      <Switch>
-        <Route path="/" exact>
-          <SearchPage />
-        </Route>
-        <Route path="/renew/:token">
-          <RenewPassword />
-        </Route>
-        <Route path="/:doctorSlug" exact>
-          <PageRouter
-            loading={loading}
-            getParameters={getParameters}
-            page404={page404}
-          />
-        </Route>
-      </Switch>
+      <Analytics id="UA-124274086-8" debug>
+        <Switch>
+          <Route path="/" exact>
+            <SearchPage />
+          </Route>
+          <Route path="/new/:newDoctorId" exact>
+            <New />
+          </Route>
+          <Route path="/renew/:token" exact>
+            <RenewPassword />
+          </Route>
+          <Route path="/suscribe" exact>
+            <SuscribeDoctor />
+          </Route>
+          <Route path="/:doctorSlug" exact>
+            <PageRouter
+              loading={loading}
+              getParameters={getParameters}
+              page404={page404}
+            />
+          </Route>
+        </Switch>
+      </Analytics>
 
     </div>
   );

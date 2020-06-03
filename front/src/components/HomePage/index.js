@@ -181,9 +181,9 @@ const HomePage = ({
         <div className="homepage-dark">
           <Avatar
             style={{ margin: 'auto', width: '100px', height: '100px' }}
-            src={`${SERVEUR_URL.substr(0, -6)}${avatar}`}
+            src={`${SERVEUR_URL.substr(0, -6)}${avatar}?random=${Math.floor(Math.random() * 10000)}`}
           />
-          <h1 className="homePage-header-title">{doctorCivility} {doctorLastname} {doctorFirstname}</h1>
+          <h1 className="homePage-header-title">{`${doctorCivility} ${doctorLastname} ${doctorFirstname}`}</h1>
           <h2 className="homePage-header-subtitle">{doctorJob}</h2>
         </div>
       </div>
@@ -198,7 +198,8 @@ const HomePage = ({
       <div className="homePage-content">
         <div className="homePage-content-cabinet">
           <div className="homePage-content-cabinet-presentation">
-            {doctorPresentation}
+            {/* TODO Recuperer les lien et les afficher */}
+            {doctorPresentation.split('\n').map((sentence) => <p>{sentence}</p>)}
           </div>
           <OpenMap
             lat={lat}
@@ -317,7 +318,7 @@ const HomePage = ({
             </div>
           </div>
           <footer className="homePage-footer">
-            Créé par Martin Brunel sous licence MIT &copy; 2020
+            MediLibre, logiciel libre créé par <a href="https://martin-brunel.io">Martin Brunel</a> sous licence MIT &copy; 2020
           </footer>
         </div>
       </div>

@@ -9,6 +9,9 @@ export const SET_HOME_PAGE_FIELDS = 'SET_HOME_PAGE_FIELDS';
 export const SUBMIT_NEW_USER_FORM = 'SUBMIT_NEW_USER_FORM';
 export const SUBMIT_CONNECT_FORM = 'SUBMIT_CONNECT_FORM';
 export const SET_SELECTED_DAY = 'SET_SELECTED_DAY';
+export const SET_APPOINTMENT_TYPE = 'SET_APPOINTMENT_TYPE';
+export const SET_COLOR = 'SET_COLOR';
+export const SET_CUSTOM_DURATION = 'SET_CUSTOM_DURATION';
 
 export const getFuturAppointments = () => ({
   type: GET_FUTUR_APPOINTMENTS,
@@ -60,4 +63,19 @@ export const submitConnectForm = () => ({
 export const setSelectedDay = (value) => ({
   type: SET_SELECTED_DAY,
   value,
+});
+
+export const setAppointmentType = (sessionType) => ({
+  type: SET_APPOINTMENT_TYPE,
+  sessionType,
+});
+
+export const setColor = (color) => ({
+  type: SET_COLOR,
+  color,
+});
+
+export const setCustomDuration = (duration) => ({
+  type: SET_CUSTOM_DURATION,
+  duration,
 });

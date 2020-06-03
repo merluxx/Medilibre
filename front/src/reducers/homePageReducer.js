@@ -6,6 +6,9 @@ import {
   SELECT_CURENT_APPOINTMENT,
   SET_HOME_PAGE_FIELDS,
   SET_SELECTED_DAY,
+  SET_APPOINTMENT_TYPE,
+  SET_COLOR,
+  SET_CUSTOM_DURATION,
 } from 'src/actions/homePage';
 
 const initialState = {
@@ -32,10 +35,28 @@ const initialState = {
   connectErrorEmail: false,
   connectErrorPassword: false,
   connectPasswordValue: '',
+  appointmentType: {},
+  color: '',
+  customDuration: null,
 };
 
 const mainReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+    case SET_CUSTOM_DURATION:
+      return {
+        ...state,
+        customDuration: action.duration,
+      };
+    case SET_COLOR:
+      return {
+        ...state,
+        color: action.color,
+      };
+    case SET_APPOINTMENT_TYPE:
+      return {
+        ...state,
+        appointmentType: action.sessionType,
+      };
     case SET_SELECTED_DAY:
       return {
         ...state,

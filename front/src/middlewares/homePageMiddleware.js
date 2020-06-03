@@ -136,7 +136,7 @@ const homePageMiddleware = (store) => (next) => (action) => {
       break;
     }
     case SELECT_APPOINTMENT: {
-      const duration = store.getState().main.parameters.appointmentDuration * 60000;
+      const duration = store.getState().homePage.customDuration * 60000;
       const data = {
         startTime: Date.parse(store.getState().homePage.currentAppointment),
         endTime: Date.parse(store.getState().homePage.currentAppointment) + duration,
@@ -145,6 +145,8 @@ const homePageMiddleware = (store) => (next) => (action) => {
         free: false,
         // eslint-disable-next-line no-underscore-dangle
         doctorId: store.getState().main.parameters._id,
+        userTakeAppointment: true,
+        color: store.getState().homePage.color,
       };
       Axios({
         method: 'post',

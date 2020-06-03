@@ -6,6 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import Button from '@material-ui/core/Button';
 
 import SERVEUR_URL from 'src/config';
 import './searchPage.scss';
@@ -96,6 +97,11 @@ const SearchPage = ({
               )}
             />
           </div>
+          <Button color="primary">
+            <Link to="/suscribe">
+              Vous êtes professionnel et vous souhaitez utiliser MediLibre
+            </Link>
+          </Button>
         </div>
       </div>
 

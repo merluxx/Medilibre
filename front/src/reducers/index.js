@@ -13,6 +13,8 @@ import newUserReducer from './newUserReducer';
 import searchPageReducer from './searchPageReducer';
 import renewReducer from './renewReducer';
 import renewPasswordReducer from './renewPasswordReducer';
+import suscribeDoctorReducer from './suscribeDoctorReducer';
+import newReducer from './newReducer';
 
 const rootReducer = combineReducers({
   main: mainReducer,
@@ -28,6 +30,8 @@ const rootReducer = combineReducers({
   searchPage: searchPageReducer,
   renew: renewReducer,
   renewPassword: renewPasswordReducer,
+  suscribeDoctor: suscribeDoctorReducer,
+  new: newReducer,
 });
 
 export default rootReducer;

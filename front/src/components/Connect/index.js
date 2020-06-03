@@ -153,6 +153,15 @@ const Connect = ({
               Connexion
             </Button>
           </DialogContent>
+          <DialogContent>
+            <Button
+              color="primary"
+            >
+              <a href="https://medi-libre.fr/admin">
+                Connexion compte praticien
+              </a>
+            </Button>
+          </DialogContent>
         </form>
       </div>
     </div>

@@ -46,9 +46,14 @@ const appointmentsMiddleware = (store) => (next) => (action) => {
                 // eslint-disable-next-line no-underscore-dangle
                 doctor._id === appointment.doctorId
               ));
+              if (appointmentDoctor) {
+                return {
+                  ...appointment,
+                  doctorName: `${appointmentDoctor.firstname} ${appointmentDoctor.lastname}`,
+                };
+              }
               return {
                 ...appointment,
-                doctorName: `${appointmentDoctor.firstname} ${appointmentDoctor.lastname}`,
               };
             });
             store.dispatch(setAppointmentsList(appointmentsList));

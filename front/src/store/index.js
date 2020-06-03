@@ -13,6 +13,8 @@ import adminMiddleware from 'src/middlewares/adminMiddleware';
 import searchPageMiddleware from 'src/middlewares/searchPageMiddleware';
 import renewMiddleware from 'src/middlewares/renewMiddleware';
 import renewPasswordMiddleware from 'src/middlewares/renewPasswordMiddleware';
+import suscribeDoctorMiddleware from 'src/middlewares/suscribeDoctorMiddleware';
+import newMiddleware from 'src/middlewares/newMiddleware';
 
 const enhancers = composeWithDevTools(
   applyMiddleware(
@@ -26,6 +28,8 @@ const enhancers = composeWithDevTools(
     searchPageMiddleware,
     renewMiddleware,
     renewPasswordMiddleware,
+    suscribeDoctorMiddleware,
+    newMiddleware,
   ),
 );
 

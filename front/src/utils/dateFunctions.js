@@ -10,13 +10,10 @@ export const getNextDays = (
   currentDate,
   appointmentDelay,
   appointmentDuration,
-  appointmentFrequency,
   appointmentPeriod,
   futurAppointments,
   oppeningHours,
   oppeningDays,
-  groupSessions,
-  groupSize,
 ) => {
   const days = [];
   // on recupere la liste des prochains jours (60)
@@ -57,7 +54,7 @@ export const getNextDays = (
       for (
         let j = Date.parse(start);
         j < Date.parse(end) - duration;
-        j += (appointmentFrequency * 60000)
+        j += (appointmentDuration * 60000)
       ) {
         const now = Date.now();
         if (j < (now + (appointmentDelay * 60000))) {
@@ -69,10 +66,6 @@ export const getNextDays = (
             isOpen = true;
           }
           let free = true;
-          let groupCount = 1;
-          if (groupSessions) {
-            groupCount = groupSize;
-          }
           // le rendez-vous testé est - il dans un delai disponible
           dayAppointments.forEach((appointment) => {
             // le rendez-vous testté est itl disponible ?
@@ -85,17 +78,9 @@ export const getNextDays = (
               && (j + duration) < appointment.endTime)
               && (j + duration) >= appointment.startTime)
             ) {
-              if (appointment.isHoliday) {
-                free = false;
-              }
-              else {
-                groupCount -= 1;
-              }
+              free = false;
             }
           });
-          if (groupCount <= 0) {
-            free = false;
-          }
           if (free) {
             isOpen = true;
           }
@@ -115,11 +100,8 @@ export const getDayAppointments = (
   inheritCurrentDay,
   appointmentDelay,
   appointmentDuration,
-  appointmentFrequency,
   futurAppointments,
   oppeningHours,
-  groupSessions,
-  groupSize,
 ) => {
   const currentDay = new Date(inheritCurrentDay);
   // on part du jour selectionné
@@ -146,17 +128,13 @@ export const getDayAppointments = (
     for (
       let j = Date.parse(start);
       j <= Date.parse(end) - duration;
-      j += (appointmentFrequency * 60000)
+      j += (appointmentDuration * 60000)
     ) {
       // pour chaque horaire du jour testé
       // si horaire avant le delai
       const now = Date.now();
       if (j >= (now + (appointmentDelay * 60000))) {
         let free = true;
-        let count = 1;
-        if (groupSessions) {
-          count = groupSize;
-        }
         dayAppointments.forEach((appointment) => {
           // le rendez-vous testté est itl disponible ?
           if (appointment.isHoliday) {
@@ -172,22 +150,14 @@ export const getDayAppointments = (
             }
           }
           else if (
-            ((j >= appointment.startTime)
-            && (j < appointment.startTime + (appointmentFrequency * 60000)))
-              || (((j + (appointmentFrequency * 60000)) > appointment.startTime)
-              && ((j + (appointmentFrequency * 60000))
-              <= appointment.startTime + (appointmentFrequency * 60000)))
-              || ((j < appointment.startTime)
-              && ((j + (appointmentFrequency * 60000))
-              > (appointment.startTime + (appointmentFrequency * 60000))))
+            ((j >= appointment.startTime) && (j < appointment.endTime))
+            || (((j + duration) > appointment.startTime) && ((j + duration) <= appointment.endTime))
+            || ((j < appointment.startTime) && ((j + duration) > (appointment.endTime)))
           ) {
             // on verifie si le endez-vous est possible dans le delay prevu par le praticien
-            count -= 1;
+            free = false;
           }
         });
-        if (count <= 0) {
-          free = false;
-        }
         if (free) {
           currentDayAppointments.push(new Date(j));
         }
