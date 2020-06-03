@@ -8,10 +8,13 @@ const adminAuth = require('../middlewares/adminAuth');
 
 // route get
 router.get('/', doctorCtrl.getAllDoctors);
+// recuperation de tout les docteurs avec id et password
+router.get('/fullList', adminAuth, doctorCtrl.getFullDoctorsList);
 // recuperation data avec un parametre
 router.get('/:id', doctorCtrl.getDoctorById);
 // recuperation data avec un parametre a partir du slug
 router.get('/slug/:slug', doctorCtrl.getDoctorBySlug);
+
 
 //route post login
 router.post('/login', doctorCtrl.login);
@@ -21,18 +24,19 @@ router.post('/checkIsLogged', adminAuth, doctorCtrl.checkIsLogged);
 router.post('/create', adminAuth, doctorCtrl.createDoctor);
 // route de d'upload d'avatar
 router.post('/avatar', adminAuth, doctorCtrl.uploadAvatar);
+// route d'envoi de la newsLetter
+router.post('/newsletter', adminAuth, doctorCtrl.sendNewsletter);
 
-/**
- * TODO proteger avec un middleware qui filtre le role d'admin
- */
+
 // modification route put
 router.put('/:id',adminAuth, doctorCtrl.modifyDoctor);
 // modification du password put
 router.put('/changePassword/:id', adminAuth, doctorCtrl.modifyPassword);
 // route de supression
-router.delete('/:id', doctorCtrl.deleteDoctor);
+router.delete('/:id',adminAuth, doctorCtrl.deleteDoctor);
 // route post
-router.post('/', doctorCtrl.createDoctor);
+router.post('/', doctorCtrl.createPendingDoctor);
+router.post('/pendingDoctor', doctorCtrl.acceptPendingDoctor);
 
 
 // route de mot de pass oublé

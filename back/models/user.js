@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema({
       default: null,
     }
   },
+  publicEmail: { type: String, required: false },
   phone: { type: String, required: false },
   active: { type: Boolean, required: true },
   password: { type: String, required: false },

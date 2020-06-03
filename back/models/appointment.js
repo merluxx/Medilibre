@@ -8,6 +8,7 @@ const appointmentSchema = mongoose.Schema({
   isHoliday: { type: Boolean, required: true },
   doctorId: { type: String, required: true },
   isDomicile: { type: Boolean, required: false },
+  color: { type: String, required: false },
 });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);

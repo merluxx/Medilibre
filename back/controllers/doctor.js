@@ -2,6 +2,7 @@
 
 const Doctor = require('../models/doctor');
 const AdminForget = require('../models/adminForget');
+const PendingDoctor = require('../models/pendingDoctor');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -11,7 +12,6 @@ const fileupload = require('express-fileupload');
 
 
 exports.renewPassword = (req, res, next) => {
-  console.log(req.body);
   AdminForget.findOne({
     token: req.body.renewToken,
   })
@@ -25,7 +25,6 @@ exports.renewPassword = (req, res, next) => {
         email: forget.email,
       })
         .then((doctor) => {
-          console.log(doctor);
           if (doctor === null) {
             res.status(400).json({ error: 'erreur'});
           }
@@ -142,22 +141,22 @@ exports.checkIsLogged = (req, res, next) => {
 
 //method to login
 exports.login = (req, res, next) => {
-  console.log(req.body.email.trim().toLowerCase());
   Doctor.findOne({ email: req.body.email.trim().toLowerCase() })
-    .then((doctor) => {
-      if (!doctor) {
+  .then((doctor) => {
+    if (!doctor) {
+      return res.status(401).json({
+        error: 'utilisateur non trouvé',
+      });
+    }
+    bcrypt.compare(req.body.password, doctor.password)
+    .then((valid) => {
+      if (!valid) {
         return res.status(401).json({
-          error: 'utilisateur non trouvé',
+          error: 'mot de passe incorrect',
         });
       }
-      bcrypt.compare(req.body.password, doctor.password)
-        .then((valid) => {
-          if (!valid) {
-            return res.status(401).json({
-              error: 'mot de passe incorrect',
-            });
-          }
-          res.status(200).json({
+      console.log(`Connexion de ${doctor.firstname} ${doctor.lastname}`);
+      res.status(200).json({
             doctorId: doctor._id,
             token: jwt.sign(
               { doctorId: doctor._id },
@@ -178,6 +177,54 @@ exports.login = (req, res, next) => {
       });
     });
 };
+
+exports.getFullDoctorsList = (req, res, next) => {
+  Doctor.findOne({
+    _id: req.doctorId,
+    superAdmin: true,
+  })
+    .then((adminDoctor) => {
+      if (adminDoctor) {
+        Doctor.find({})
+          .then((doctors) => {
+            res.status(201).json({
+              doctors,
+            });
+          })
+      }
+      else {
+        res.status(500).json({
+          error: 'erreur',
+        });
+      }
+    });
+};
+
+exports.sendNewsletter = (req, res, next) => {
+  Doctor.findOne({
+    _id: req.doctorId,
+    superAdmin: true,
+  })
+    .then((adminDoctor) => {
+      if (adminDoctor) {
+        Doctor.find()
+          .then((doctors) => {
+            mail.sendNewsletter(req.body.subject, req.body.content, adminDoctor, doctors);
+            res.status(200).json({
+              message: 'messages bien envoyés',
+            });
+          })
+          .catch((error) => {
+            res.status(400).json({ error,})
+          })
+      }
+      else {
+        res.status(500).json({
+          error: 'erreur',
+        });
+      }
+    });
+}
 
 // method to create parameter
 exports.createDoctor = (req, res, next) => {
@@ -212,9 +259,24 @@ exports.createDoctor = (req, res, next) => {
               slug: req.body.slug,
               superAdmin: req.body.superAdmin,
               onlineAppointment: false,
+              sessionType: [
+                {
+                    name: "Séance de suivi", 
+                    duration: 30, 
+                    groupSession: false, 
+                    groupSize: 1, 
+                    color: "#242a66"
+                }, 
+                {
+                    name: "Première séance", 
+                    duration: 30, 
+                    groupSession: false, 
+                    groupSize: 1.0, 
+                    color: "#6CA054"
+                },
+              ],
             });
-            console.log(hash);
-            console.log(doctor);
+            console.log(`nouveau compte Praticien ${doctor.firstname} ${doctor.lastname}`);
             doctor.save().then(
               () => {
                 res.status(201).json({
@@ -241,6 +303,187 @@ exports.createDoctor = (req, res, next) => {
       }
     });
 };
+
+exports.createPendingDoctor = (req, res, next) => {
+  Doctor.findOne({ email: req.body.email })
+    .then((doctor) => {
+      if(doctor) {
+        res.status(400).json({
+          error: 'Adresse mail deja utilisée',
+        });
+      }
+      else {
+        bcrypt.hash(req.body.password, 10)
+          .then((hash) => {
+            const pendingDoctor = new PendingDoctor({
+              firstname: req.body.firstname,
+              lastname: req.body.lastname,
+              job: req.body.job,
+              civility: req.body.civility,
+              appointmentFrequency: 30,
+              appointmentDuration: 30,
+              appointmentDelay: 1440,
+              oppeningHours: [
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+                [
+                  ['08:00', '12:00'],
+                  ['14:00', '19:00']
+                ],
+             ],
+              oppeningDays: ['0', '1', '1', '1', '1', '1', '0'],
+              password: hash,
+              email: req.body.email.trim().toLowerCase(),
+              adress: req.body.adress,
+              zip: req.body.zip,
+              city: req.body.city,
+              publicEmail: '',
+              phone: '',
+              startPlanning: '08:00',
+              endPlanning: '20:00',
+              presentation: 'votre texte de presentation',
+              slug: `${req.body.firstname.trim()}-${req.body.lastname.trim()}-${req.body.city.trim()}`,
+              superAdmin: false,
+              avatar: '',
+              onlineAppointment: false,
+              groupSessions: false,
+              groupSize: 1,
+              sessionType: [
+                {
+                    name: "Séance de suivi", 
+                    duration: 30, 
+                    groupSession: false, 
+                    groupSize: 1, 
+                    color: "#242a66"
+                }, 
+                {
+                    name: "Première séance", 
+                    duration: 30, 
+                    groupSession: false, 
+                    groupSize: 1.0, 
+                    color: "#6CA054"
+                },
+              ],
+            });
+            pendingDoctor.save(pendingDoctor)
+              .then((newDoctor) => {
+                console.log(`nouveau compte  Praticien en attente ${newDoctor.firstname} ${newDoctor.lastname}`);
+                mail.confirmValidDoctorEmail(newDoctor);
+                res.status(200).json(newDoctor);
+              })
+              .catch((error) => {
+                res.status(400).json(error);
+              })
+          })
+          .catch((error) => {
+            res.status(400).json(error);
+          });
+      }
+    });
+}
+
+exports.acceptPendingDoctor = (req, res, next) => {
+  PendingDoctor.findOne({ _id: req.body.newDoctorId })
+    .then((pendingDoctor) => {
+      if (pendingDoctor) {
+        Doctor.findOne({ email: pendingDoctor.email })
+          .then((doctor) => {
+            if (doctor) {
+              res.status(500).json({
+                error: 'compte deja validé',
+              });
+            }
+            else {
+              const newDoctor = new Doctor({
+                firstname: pendingDoctor.firstname,
+                lastname: pendingDoctor.lastname,
+                job: pendingDoctor.job,
+                civility: pendingDoctor.civility,
+                appointmentFrequency: pendingDoctor.appointmentFrequency,
+                appointmentDuration: pendingDoctor.appointmentDuration,
+                appointmentDelay: pendingDoctor.appointmentDelay,
+                oppeningHours: pendingDoctor.oppeningHours,
+                oppeningDays: pendingDoctor.oppeningDays,
+                password: pendingDoctor.password,
+                email: pendingDoctor.email.trim().toLowerCase(),
+                adress: pendingDoctor.adress,
+                zip: pendingDoctor.zip,
+                city: pendingDoctor.city,
+                publicEmail: pendingDoctor.publicEmail,
+                phone: pendingDoctor.phone,
+                startPlanning: new Date(`2020/01/01 ${pendingDoctor.startPlanning}`),
+                endPlanning: new Date(`2020/01/01 ${pendingDoctor.endPlanning}`),
+                presentation: pendingDoctor.presentation,
+                slug: pendingDoctor.slug.toLowerCase().replace(' ', '-'),
+                superAdmin: pendingDoctor.superAdmin,
+                onlineAppointment: false,
+                groupSessions: false,
+                groupSize: 1,
+                appointmentPeriod: 30,
+                sessionType: [
+                  {
+                      name: "Séance de suivi", 
+                      duration: 30, 
+                      groupSession: false, 
+                      groupSize: 1, 
+                      color: "#242a66"
+                  }, 
+                  {
+                      name: "Première séance", 
+                      duration: 30, 
+                      groupSession: false, 
+                      groupSize: 1.0, 
+                      color: "#6CA054"
+                  },
+                ],
+              });
+              newDoctor.save()
+                .then((doc) => {
+                  PendingDoctor.deleteOne({ _id: pendingDoctor._id})
+                    .then(() => {
+                      mail.newDoctorAccount(doc._id);
+                      console.log(`nouveau compte Praticien ${doc.firstname} ${doc.lastname}`);
+                      res.status(201).json(doc);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    })
+                })
+                .catch((error) => {
+                  res.status(400).json(error);
+                })
+            }
+          });
+      }
+      else {
+        res.status(400).json({
+          error: 'compte inconu',
+        });
+      }
+    })
+} 
 
 // method to get one parameter
 exports.getOneDoctor = (req, res, next) => {
@@ -327,10 +570,12 @@ exports.modifyDoctor = (req, res, next) => {
     groupSessions: req.body.groupSessions,
     groupSize: req.body.groupSize,
     appointmentPeriod: req.body.appointmentPeriod,
+    sessionType: req.body.sessionType,
+    customMailText: req.body.customMailText,
   });
-  console.log(doctor);
   Doctor.updateOne({_id: req.params.id}, doctor).then(
-    () => {
+    (doc) => {
+      console.log(`modification du compte praticien de ${doctor.firstname} ${doctor.lastname}`);
       res.status(201).json({
         doctor,
       });
@@ -352,9 +597,9 @@ exports.modifyPassword = (req,res,next) => {
           _id: req.params.id,
           password: hash,
         });
-        console.log(doctor);
         Doctor.updateOne({_id: req.params.id}, doctor).then(
-          () => {
+          (doc) => {
+            console.log(`mot de passe modifié pour le praticien ${doc.firstname} ${doc.lastname}`)
             res.status(201).json({
               doctor,
             });
@@ -383,19 +628,35 @@ exports.modifyPassword = (req,res,next) => {
 
 // method to delete parameter
 exports.deleteDoctor = (req, res, next) => {
-  Doctor.deleteOne({_id: req.params.id}).then(
-    () => {
-      res.status(200).json({
-        message: 'Deleted!'
-      });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+  Doctor.find({
+    _id: req.doctorId,
+    superAdmin: true,
+  })
+    .then((adminDoctor) => {
+      if (adminDoctor) {
+        Doctor.deleteOne({_id: req.params.id}).then(
+          () => {
+            res.status(200).json({
+              message: 'Deleted!'
+            });
+          }
+        ).catch(
+          (error) => {
+            res.status(400).json({
+              error: error
+            });
+          }
+        );
+      }
+      else {
+        res.status(500).json({
+          error: 'erreur',
+        });
+      }
+    });
+
+
+
 };
 
 exports.getAllDoctors = (req, res, next) => {

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const doctorSchema = mongoose.Schema({
+const pendingDoctorSchema = mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   job: { type: String, required: true },
@@ -39,8 +39,6 @@ const doctorSchema = mongoose.Schema({
   groupSessions: { type: Boolean, required: false },
   groupSize: { type: Number, required: false },
   appointmentPeriod: { type: Number, required: false },
-  sessionType: { type: Array, required: false },
-  customMailText: { type: String, required: false },
 });
 
-module.exports = mongoose.model('Doctor', doctorSchema);
+module.exports = mongoose.model('PendingDoctor', pendingDoctorSchema);

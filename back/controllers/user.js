@@ -82,6 +82,7 @@ exports.signin = (req, res, next) => {
         phone: req.body.phone,
         active: true,
         email: req.body.email.trim().toLowerCase(),
+        publicEmail: req.body.email.trim().toLowerCase(),
         password: hash,
         status: req.body.status,
         doctorId: [req.body.doctorId],
@@ -109,6 +110,13 @@ exports.signin = (req, res, next) => {
 
 // method to create newUser
 exports.createUser = (req, res, next) => {
+  let publicEmail;
+  if (req.body.publicEmail) {
+    publicEmail = req.body.publicEmail;
+  }
+  else {
+    publicEmail = req.body.email;
+  }
   const user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -116,6 +124,7 @@ exports.createUser = (req, res, next) => {
     active: req.body.active,
     status: req.body.status,
     doctorId: [req.body.doctorId],
+    publicEmail,
   });
   user.save().then(
     () => {
@@ -176,6 +185,7 @@ exports.modifyUser = (req, res, next) => {
     lastname: req.body.lastname,
     email: req.body.email,
     phone: req.body.phone,
+    publicEmail: req.body.email,
   };
   User.updateOne({_id: req.userId}, user).then(
     () => {
@@ -196,13 +206,12 @@ exports.modifyUser = (req, res, next) => {
 // method to modify user ADMIN
 exports.modifyUserAdmin = (req, res, next) => {
   const oldUser = User.find({_id: req.params.id});
-  console.log ('old route');
   const user = {
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     phone: req.body.phone,
+    publicEmail: req.body.publicEmail,
   };
-  console.log(user);
   User.updateOne({_id: req.params.id}, user).then(
     () => {
       res.status(201).json({
@@ -219,7 +228,6 @@ exports.modifyUserAdmin = (req, res, next) => {
 };
 
 exports.modifyPassword = (req,res,next) => {
-  console.log('modification du mot de passe');
   if (req.body.password.length > 5) {
     bcrypt.hash(req.body.password, 10)
       .then((hash) => {
@@ -227,7 +235,6 @@ exports.modifyPassword = (req,res,next) => {
           _id: req.userId,
           password: hash,
         });
-        console.log('blob',user);
         User.updateOne({_id: req.userId}, user).then(
           () => {
             res.status(201).json({
@@ -261,7 +268,6 @@ exports.forgotPassword = (req, res, next) => {
     email: req.body.email,
   })
     .then((user) => {
-      console.log(user);
       const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       const expirationDate = Date.now() + 3600000;
       const forget = new UserForget({
@@ -271,7 +277,6 @@ exports.forgotPassword = (req, res, next) => {
       });
       forget.save()
         .then(() => {
-          console.log(req.body.url);
           userForgetPassword(req.body.email, token, req.body.url);
         });
       res.status(201).json({
@@ -299,7 +304,6 @@ exports.renewPassword = (req, res, next) => {
         email: forget.email,
       })
         .then((user) => {
-          console.log(user);
           if (user === null) {
             res.status(400).json({ error: 'erreur'});
           }
@@ -351,7 +355,7 @@ exports.deleteUser = (req, res, next) => {
 exports.getAllUsers = (req, res, next) => {
   User.find({
     doctorId: req.doctorId,
-  }).then(
+  }).collation({'locale':'en'}).sort({ lastname: 1 }).then(
     (users) => {
       res.status(200).json(users);
     }

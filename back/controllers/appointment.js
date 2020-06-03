@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const { appointmentConfirmMail, appointmentCancelMail } = require('./mail');
+const { appointmentConfirmMail, appointmentConfirmMailDoctor , appointmentCancelMail } = require('./mail');
 
 const Appointment = require('../models/appointment');
 const User = require('../models/user');
@@ -11,20 +11,17 @@ exports.createAppointment = (req, res, next) => {
     doctorId: req.body.doctorId,
    })
     .then((user) => {
-      console.log(user);
       if (!user) {
-        console.log('not user');
         User.updateOne({
           _id: req.body.userId,
         },
         {
          $push: { doctorId: req.body.doctorId }, 
         }).then((user) => {
-          console.log(user);
+          console.log('rendez-vous créé');
         });
       }
     });
-  console.log(req.body);
   const appointment = new Appointment({
     startTime: req.body.startTime,
     endTime: req.body.endTime,
@@ -33,7 +30,11 @@ exports.createAppointment = (req, res, next) => {
     isHoliday: req.body.isHoliday,
     doctorId: req.body.doctorId,
     isDomicile: req.body.isDomicile,
+    color: req.body.color,
   });
+  if (req.body.userTakeAppointment) {
+    appointmentConfirmMailDoctor(appointment, req.body.doctorId);
+  }
   appointmentConfirmMail(appointment, req.body.userId);
   appointment.save().then(
     () => {
@@ -86,7 +87,8 @@ exports.modifyAppointment = (req, res, next) => {
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     free: req.body.free,
-    userId: req.body.userId
+    userId: req.body.userId,
+    color: req.body.color,
   });
   Appointment.updateOne({_id: req.params.id}, appointement).then(
     () => {
@@ -135,6 +137,7 @@ exports.deleteAppointmentAdmin = (req, res, next) => {
         _id: req.params.id,
       }).then(
         () => {
+          appointmentCancelMail(appointment, appointment.userId);
           res.status(200).json({
             message: 'Deleted!'
           });
