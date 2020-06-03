@@ -13,6 +13,8 @@ const mapStateToProps = (state) => ({
   modifiedAppointmentEnd: state.admin.modifiedAppointmentEnd,
   modifiedAppointmentUserId: state.admin.modifiedAppointmentUserId,
   modifiedAppointmentId: state.admin.modifiedAppointmentId,
+  modifiedEventColorPickerShow: state.admin.modifiedEventColorPickerShow,
+  modifiedAppointmentColor: state.admin.modifiedAppointmentColor,
 });
 
 // eslint-disable-next-line no-unused-vars

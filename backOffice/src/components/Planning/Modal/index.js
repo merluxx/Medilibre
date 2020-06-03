@@ -14,6 +14,7 @@ import Dialog from '@material-ui/core/Dialog';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { DialogContentText } from '@material-ui/core';
+import { CirclePicker } from 'react-color';
 
 const Modal = ({
   newAppointmentStart,
@@ -22,6 +23,8 @@ const Modal = ({
   newAppointmentIsHoliday,
   newAppointmentIsDomicile,
   newAppointmentIsRecurent,
+  newAppointmentColor,
+  newAppointmentColorPickerShow,
   users,
   newUserName,
   setAdminPageFields,
@@ -30,6 +33,7 @@ const Modal = ({
   newUserFirstname,
   newUserLastname,
   newUserPhone,
+  newUserPublicEmail,
   setNewUserFields,
   submitNewUserFormAdmin,
   open,
@@ -123,6 +127,44 @@ const Modal = ({
             label="Recurent"
           />
         </DialogContent>
+        {!newAppointmentIsDomicile && !newAppointmentIsHoliday && (
+          <>
+            <DialogContent>
+              Couleur
+            </DialogContent>
+            <DialogContent
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {!newAppointmentColorPickerShow && (
+                <div
+                  style={{
+                    width: '100%',
+                    height: 28,
+                    backgroundColor: newAppointmentColor,
+                  }}
+                  onClick={() => {
+                    setAdminPageFields('newAppointmentColorPickerShow', true);
+                  }}
+                />
+              )}
+              {newAppointmentColorPickerShow && (
+                <CirclePicker
+                  onChange={(color) => {
+                    setAdminPageFields('newAppointmentColorPickerShow', false);
+                    setAdminPageFields('newAppointmentColor', color.hex);
+                  }}
+                  colors={
+                    ['#242a66', '#F0F', '#F4D06F', '#FF8811', '#9DD9D2', '#C9E4E7', '#343434', '#FFE66D', '#5E4AE3', '#F0A7A0', '#6CA054']
+                  }
+                />
+              )}
+            </DialogContent>
+          </>
+        )}
         {newAppointmentIsRecurent && (
         <DialogContent>
           <DialogContentText>Tout les :</DialogContentText>
@@ -409,6 +451,8 @@ const Modal = ({
                 setNewUserFields('lastnameValue', event.target.value);
               }}
             />
+          </DialogContent>
+          <DialogContent>
             <TextField
               id="outlined-basic-firstname"
               label="Prénom"
@@ -427,6 +471,17 @@ const Modal = ({
               value={newUserPhone}
               onChange={(event) => {
                 setNewUserFields('phoneValue', event.target.value);
+              }}
+            />
+          </DialogContent>
+          <DialogContent>
+            <TextField
+              id="outlined-basic-phone"
+              label="Email"
+              variant="outlined"
+              value={newUserPublicEmail}
+              onChange={(event) => {
+                setNewUserFields('publicEmailValue', event.target.value);
               }}
             />
           </DialogContent>
@@ -456,6 +511,7 @@ Modal.propTypes = {
   newUserFirstname: PropTypes.string.isRequired,
   newUserLastname: PropTypes.string.isRequired,
   newUserPhone: PropTypes.string.isRequired,
+  newUserPublicEmail: PropTypes.string.isRequired,
   setNewUserFields: PropTypes.func.isRequired,
   submitNewUserFormAdmin: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
@@ -472,6 +528,8 @@ Modal.propTypes = {
   sunday: PropTypes.bool.isRequired,
   startRecurenceDay: PropTypes.object.isRequired,
   endRecurenceDay: PropTypes.object.isRequired,
+  newAppointmentColor: PropTypes.string.isRequired,
+  newAppointmentColorPickerShow: PropTypes.bool.isRequired,
 };
 
 export default Modal;

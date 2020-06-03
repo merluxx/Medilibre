@@ -5,6 +5,7 @@ import {
   ADD_USER,
   DELETE_USER,
   UPDATE_USER,
+  setPatientsPageFields,
 } from 'src/actions/patients';
 
 import { addFlashMessage } from 'src/actions/app';
@@ -42,6 +43,7 @@ const patientsMiddleware = (store) => (next) => (action) => {
             .then((users) => {
               store.dispatch(setAllUsers([]));
               store.dispatch(setAllUsers(users.data));
+              store.dispatch(setPatientsPageFields('userList', users.data));
               store.dispatch(addFlashMessage('Dossier patient mis à jour', 'success'));
             })
             .catch(() => {
@@ -58,6 +60,7 @@ const patientsMiddleware = (store) => (next) => (action) => {
         firstname: action.lastUser.firstname,
         lastname: action.lastUser.lastname,
         phone: action.lastUser.phone,
+        publicEmail: action.lastUser.publicEmail,
         status: 'ADMIN_ENTRY',
         active: false,
       };
@@ -86,6 +89,7 @@ const patientsMiddleware = (store) => (next) => (action) => {
             .then((users) => {
               store.dispatch(setAllUsers([]));
               store.dispatch(setAllUsers(users.data));
+              store.dispatch(setPatientsPageFields('userList', users.data));
               store.dispatch(addFlashMessage('Dossier patient mis à jour', 'success'));
             })
             .catch(() => {
@@ -98,6 +102,7 @@ const patientsMiddleware = (store) => (next) => (action) => {
       break;
     }
     case ADD_USER: {
+      console.log(action.newUser);
       Axios({
         method: 'post',
         url: `${SERVEUR_URL}/user`,
@@ -126,6 +131,7 @@ const patientsMiddleware = (store) => (next) => (action) => {
           })
             .then((users) => {
               store.dispatch(setAllUsers(users.data));
+              store.dispatch(setPatientsPageFields('userList', users.data));
               store.dispatch(addFlashMessage('Nouveau patient enregistré', 'success'));
             })
             .catch(() => {

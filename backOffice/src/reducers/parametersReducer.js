@@ -14,6 +14,30 @@ const initialState = {
   groupSessions: false,
   groupSize: 1,
   period: 7,
+  sessionTypesDialogShow: false,
+  sessionTypes: [],
+  sessionTypesState: {
+    columns: [
+      { title: 'Intitulé', field: 'name' },
+      { title: 'Durée', field: 'duration' },
+      { title: 'Couleur', field: 'color' },
+    ],
+    data: [],
+  },
+  deleteDialogShow: false,
+  editDialogShow: false,
+  addDialogShow: false,
+  currentSessionType: {},
+  modifiedCurrentColor: '#f0f',
+  showColorPicker: false,
+  newTypeName: '',
+  newTypeDuration: 30,
+  newTypeFrequency: 30,
+  newTypeColor: '#242A66',
+  newTypeGroupSession: false,
+  newTypeGroupSize: 1,
+  customMailTextDialog: false,
+  customMailText: '',
 };
 
 const parametersrReducer = (state = initialState, action = {}) => {

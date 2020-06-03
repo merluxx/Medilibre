@@ -13,20 +13,35 @@ const Patients = ({
   tableState,
   setTableState,
   loading,
+  userList,
+  setPatientsPageFields,
 }) => {
   useEffect(() => {
+    setPatientsPageFields('userList', users);
     const newTableState = {
       columns: [
         { title: 'Nom', field: 'lastname' },
         { title: 'Prénom', field: 'firstname' },
         { title: 'N° de téléphone', field: 'phone' },
-        { title: 'email', field: 'email', editable: 'never' },
+        {
+          title: 'email',
+          field: 'publicEmail',
+          render: (rowData) => {
+            let render;
+            if (rowData.email) {
+              render = rowData.email;
+            }
+            else {
+              render = rowData.publicEmail;
+            }
+            return render;
+          },
+        },
       ],
-      data: users,
+      data: userList,
     };
     setTableState(newTableState);
-  }, [users]);
-
+  }, [userList]);
 
   return (
     <div className="patients">
@@ -58,6 +73,7 @@ const Patients = ({
                 setTimeout(() => {
                   {
                     updateUser(newData);
+                    setPatientsPageFields('userList', users);
                   }
                   resolve();
                 }, 1000);
@@ -68,6 +84,7 @@ const Patients = ({
                   {
                     // eslint-disable-next-line no-underscore-dangle
                     deleteUser(oldData._id);
+                    setPatientsPageFields('userList', users);
                   }
                   resolve();
                 }, 1000);
@@ -88,6 +105,8 @@ Patients.propTypes = {
   tableState: PropTypes.object.isRequired,
   setTableState: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
+  userList: PropTypes.array.isRequired,
+  setPatientsPageFields: PropTypes.func.isRequired,
 };
 
 export default Patients;

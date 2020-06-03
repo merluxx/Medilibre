@@ -6,6 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TimePicker, DatePicker } from '@material-ui/pickers/';
 import DriveEtaOutlinedIcon from '@material-ui/icons/DriveEtaOutlined';
+import { CirclePicker } from 'react-color';
 
 const ModifyModal = ({
   setAdminPageFields,
@@ -15,12 +16,20 @@ const ModifyModal = ({
   modifiedAppointmentEnd,
   modifiedAppointmentId,
   modifySelectedAppointment,
+  modifiedEventColorPickerShow,
+  modifiedAppointmentColor,
 }) => {
   useEffect(() => {
     setAdminPageFields('modifiedAppointmentStart', new Date(selectedEvent.start));
     setAdminPageFields('modifiedAppointmentEnd', new Date(selectedEvent.end));
     setAdminPageFields('modifiedAppointmentUserId', selectedEvent.userId);
     setAdminPageFields('modifiedAppointmentId', selectedEvent.id);
+    if (selectedEvent.color) {
+      setAdminPageFields('modifiedAppointmentColor', selectedEvent.color);
+    }
+    else {
+      setAdminPageFields('modifiedAppointmentColor', '#242a66');
+    }
   }, []);
 
   const disabled = !selectedEvent.isHoliday;
@@ -35,6 +44,45 @@ const ModifyModal = ({
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         Modification du Rendez-vous
       </DialogTitle>
+
+      {!selectedEvent.isDomicile && !selectedEvent.isHoliday && (
+        <>
+          <DialogContent>
+            Couleur
+          </DialogContent>
+          <DialogContent
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {!modifiedEventColorPickerShow && (
+              <div
+                style={{
+                  width: '100%',
+                  height: 28,
+                  backgroundColor: modifiedAppointmentColor,
+                }}
+                onClick={() => {
+                  setAdminPageFields('modifiedEventColorPickerShow', true);
+                }}
+              />
+            )}
+            {modifiedEventColorPickerShow && (
+              <CirclePicker
+                onChange={(color) => {
+                  setAdminPageFields('modifiedEventColorPickerShow', false);
+                  setAdminPageFields('modifiedAppointmentColor', color.hex);
+                }}
+                colors={
+                  ['#242a66', '#F0F', '#F4D06F', '#FF8811', '#9DD9D2', '#C9E4E7', '#343434', '#FFE66D', '#5E4AE3', '#F0A7A0', '#6CA054']
+                }
+              />
+            )}
+          </DialogContent>
+        </>
+      )}
       {modifiedAppointmentId && (
         <>
           {selectedEvent.isHoliday && (
@@ -175,6 +223,8 @@ ModifyModal.propTypes = {
   modifiedAppointmentEnd: PropTypes.object.isRequired,
   modifiedAppointmentId: PropTypes.string.isRequired,
   modifySelectedAppointment: PropTypes.func.isRequired,
+  modifiedEventColorPickerShow: PropTypes.bool.isRequired,
+  modifiedAppointmentColor: PropTypes.string.isRequired,
 };
 
 export default ModifyModal;

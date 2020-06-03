@@ -1,4 +1,4 @@
-import { SET_TABLE_STATE } from 'src/actions/patients';
+import { SET_TABLE_STATE, SET_PATIENTS_PAGE_FIELDS } from 'src/actions/patients';
 
 const initialState = {
   tableState: {
@@ -10,10 +10,16 @@ const initialState = {
     ],
     data: [],
   },
+  userList: [],
 };
 
 const newUserReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+    case SET_PATIENTS_PAGE_FIELDS:
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
     case SET_TABLE_STATE:
       return {
         ...state,

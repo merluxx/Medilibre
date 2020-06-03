@@ -5,6 +5,7 @@ import SERVEUR_URL from 'src/config';
 import {
   SUBMIT_NEW_USER_FORM_ADMIN,
   setOpenNewUserModal,
+  setNewUserFields,
 } from 'src/actions/newUser';
 import {
   SUBMIT_ADMIN_CONNECT_FORM,
@@ -37,6 +38,7 @@ const adminMiddleware = (store) => (next) => (action) => {
         endTime: Date.parse(store.getState().admin.modifiedAppointmentEnd),
         free: false,
         userId: store.getState().admin.modifiedAppointmentUserId,
+        color: store.getState().admin.modifiedAppointmentColor,
       };
 
       const { doctorToken, doctorId } = sessionStorage;
@@ -91,6 +93,7 @@ const adminMiddleware = (store) => (next) => (action) => {
         firstname: store.getState().newUser.firstnameValue,
         lastname: store.getState().newUser.lastnameValue,
         phone: store.getState().newUser.phoneValue,
+        publicEmail: store.getState().newUser.publicEmailValue,
         active: false,
         status: 'ADMIN_ENTRY',
         doctorId,
@@ -105,6 +108,9 @@ const adminMiddleware = (store) => (next) => (action) => {
         data: user,
       })
         .then((newUser) => {
+          store.dispatch(setNewUserFields('firstnameValue', ''));
+          store.dispatch(setNewUserFields('lastnameValue', ''));
+          store.dispatch(setNewUserFields('phoneValue', ''));
           store.dispatch(setAdminPageFields('newAppointmentUser', newUser.data.user));
           const newUserSlug = `${newUser.data.user.lastname.toUpperCase()} ${newUser.data.user.firstname.charAt(0).toUpperCase()}${newUser.data.user.firstname.slice(1)}`;
           store.dispatch(setAdminPageFields('newUserName', newUserSlug));
@@ -142,6 +148,7 @@ const adminMiddleware = (store) => (next) => (action) => {
           doctorId,
           isHoliday: store.getState().admin.newAppointmentIsHoliday,
           isDomicile: store.getState().admin.newAppointmentIsDomicile,
+          color: store.getState().admin.newAppointmentColor,
         };
         axios({
           method: 'post',
@@ -296,6 +303,7 @@ const adminMiddleware = (store) => (next) => (action) => {
                     id: appointment._id,
                     isHoliday: appointment.isHoliday,
                     isDomicile: appointment.isDomicile,
+                    color: appointment.color,
                   };
                 });
                 axios({

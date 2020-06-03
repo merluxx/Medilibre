@@ -59,7 +59,6 @@ const Planning = ({
     isAllDay: droppedOnAllDaySlot,
   }) => {
     const events = appointments;
-
     const idx = events.indexOf(event);
     let { allDay } = event;
 
@@ -82,6 +81,7 @@ const Planning = ({
     setAdminPageFields('modifiedAppointmentEnd', new Date(updatedEvent.end));
     setAdminPageFields('modifiedAppointmentUserId', updatedEvent.userId);
     setAdminPageFields('modifiedAppointmentId', updatedEvent.id);
+    setAdminPageFields('modifiedAppointmentColor', updatedEvent.color);
     modifySelectedAppointment();
   };
 
@@ -126,8 +126,11 @@ const Planning = ({
     if (event.isHoliday) {
       backgroundColor = '#92140C';
     }
-    if (event.isDomicile) {
+    else if (event.isDomicile) {
       backgroundColor = '#505385';
+    }
+    else if (event.color) {
+      backgroundColor = event.color;
     }
     const style = {
       backgroundColor,

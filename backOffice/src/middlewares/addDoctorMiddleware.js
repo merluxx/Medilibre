@@ -10,7 +10,6 @@ const parametersMiddleware = (store) => (next) => (action) => {
   const { doctorToken } = sessionStorage;
   switch (action.type) {
     case ADD_NEW_DOCTOR: {
-      store.dispatch(addFlashMessage('hello boy'));
       const state = store.getState().addDoctor;
       const doctor = {
         firstname: state.firstname,

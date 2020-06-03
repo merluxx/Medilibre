@@ -25,6 +25,8 @@ const initialState = {
   newPhone: '',
   phoneError: false,
   newPassword: '',
+  newColor: '',
+  newColorPickerShow: false,
   passwordError: false,
   newConfirmPassword: '',
   confirmPasswordError: false,

@@ -510,6 +510,9 @@ const Cabinet = ({
                                 checked={mondayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('mondayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${mondayMorningEnd}`) > new Date(`2020/01/01 ${mondayAfternoonStart}`)) {
+                                    changeCabinetFields('mondayMorningEnd', mondayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -556,7 +559,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${mondayMorningStart}`)) {
                               newTime = mondayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${mondayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${mondayAfternoonStart}`) && !mondayFull) {
                               newTime = mondayAfternoonStart;
                             }
                             else {
@@ -634,6 +637,9 @@ const Cabinet = ({
                                 checked={tuesdayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('tuesdayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${tuesdayMorningEnd}`) > new Date(`2020/01/01 ${tuesdayAfternoonStart}`)) {
+                                    changeCabinetFields('tuesdayMorningEnd', tuesdayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -680,7 +686,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${tuesdayMorningStart}`)) {
                               newTime = tuesdayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${tuesdayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${tuesdayAfternoonStart}`) && !tuesdayFull) {
                               newTime = tuesdayAfternoonStart;
                             }
                             else {
@@ -759,6 +765,9 @@ const Cabinet = ({
                                 checked={wednesdayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('wednesdayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${wednesdayMorningEnd}`) > new Date(`2020/01/01 ${wednesdayAfternoonStart}`)) {
+                                    changeCabinetFields('wednesdayMorningEnd', wednesdayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -805,7 +814,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${wednesdayMorningStart}`)) {
                               newTime = wednesdayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${wednesdayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${wednesdayAfternoonStart}`) && !wednesdayFull) {
                               newTime = wednesdayAfternoonStart;
                             }
                             else {
@@ -883,6 +892,9 @@ const Cabinet = ({
                                 checked={thursdayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('thursdayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${thursdayMorningEnd}`) > new Date(`2020/01/01 ${thursdayAfternoonStart}`)) {
+                                    changeCabinetFields('thursdayMorningEnd', thursdayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -929,7 +941,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${thursdayMorningStart}`)) {
                               newTime = thursdayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${thursdayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${thursdayAfternoonStart}`) && !thursdayFull) {
                               newTime = thursdayAfternoonStart;
                             }
                             else {
@@ -1007,6 +1019,9 @@ const Cabinet = ({
                                 checked={fridayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('fridayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${fridayMorningEnd}`) > new Date(`2020/01/01 ${fridayAfternoonStart}`)) {
+                                    changeCabinetFields('fridayMorningEnd', fridayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -1053,7 +1068,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${fridayMorningStart}`)) {
                               newTime = fridayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${fridayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${fridayAfternoonStart}`) && !fridayFull) {
                               newTime = fridayAfternoonStart;
                             }
                             else {
@@ -1131,6 +1146,9 @@ const Cabinet = ({
                                 checked={saturdayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('saturdayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${saturdayMorningEnd}`) > new Date(`2020/01/01 ${saturdayAfternoonStart}`)) {
+                                    changeCabinetFields('saturdayMorningEnd', saturdayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -1177,7 +1195,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${saturdayMorningStart}`)) {
                               newTime = saturdayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${saturdayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${saturdayAfternoonStart}`) && !saturdayFull) {
                               newTime = saturdayAfternoonStart;
                             }
                             else {
@@ -1226,7 +1244,7 @@ const Cabinet = ({
                               value={new Date(`2020/01/01 ${saturdayAfternoonEnd}`)}
                               onChange={(event) => {
                                 let newTime;
-                                if (event < new Date(`2020/01/01 ${saturdayAfternoonStart}`)) {
+                                if (event < new Date(`2020/01/01 ${saturdayAfternoonStart}`) && !saturdayFull) {
                                   newTime = saturdayAfternoonStart;
                                 }
                                 else {
@@ -1255,6 +1273,9 @@ const Cabinet = ({
                                 checked={sundayFull}
                                 onChange={(event) => {
                                   changeCabinetFields('sundayFull', event.target.checked);
+                                  if (new Date(`2020/01/01 ${sundayMorningEnd}`) > new Date(`2020/01/01 ${sundayAfternoonStart}`)) {
+                                    changeCabinetFields('sundayMorningEnd', sundayAfternoonStart);
+                                  }
                                 }}
                                 name="monday-fullDay"
                                 color="primary"
@@ -1301,7 +1322,7 @@ const Cabinet = ({
                             if (event < new Date(`2020/01/01 ${sundayMorningStart}`)) {
                               newTime = sundayMorningStart;
                             }
-                            else if (event > new Date(`2020/01/01 ${sundayAfternoonStart}`)) {
+                            else if (event > new Date(`2020/01/01 ${sundayAfternoonStart}`) && !sundayFull) {
                               newTime = sundayAfternoonStart;
                             }
                             else {

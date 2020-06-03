@@ -9,6 +9,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Analytics from 'react-router-ga';
 
 // == Import
 import Admin from 'src/containers/Admin';
@@ -20,6 +21,8 @@ import Parameters from 'src/containers/Parameters';
 import Forgot from 'src/containers/Forgot';
 import Renew from 'src/containers/Renew';
 import AddDoctor from 'src/containers/AddDoctor';
+import ManageDoctor from 'src/containers/ManageDoctor';
+import Send from 'src/containers/Send';
 
 
 import { useSnackbar } from 'notistack';
@@ -59,78 +62,96 @@ const App = ({
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Switch>
-        <Route path="/" exact>
-          {!loading && (
-            <>
-              {!isAdmin && <Admin />}
-              {isAdmin && <Redirect to="/planning" />}
-            </>
-          )}
-        </Route>
-        <Route path="/forgot-password" exact>
-          {!loading && (
-            <>
-              {!isAdmin && <Forgot />}
-              {isAdmin && <Redirect to="/planning" />}
-            </>
-          )}
-        </Route>
-        <Route path="/renew/:token" exact>
-          {!loading && (
-            <>
-              {!isAdmin && <Renew />}
-              {isAdmin && <Redirect to="/planning" />}
-            </>
-          )}
-        </Route>
-        <Route path="/planning" exact>
-          {!loading && (
-            <>
-              {isAdmin && <Planning />}
-              {!isAdmin && <Redirect to="/" />}
-            </>
-          )}
-        </Route>
-        <Route path="/patients" exact>
-          {!loading && (
-            <>
-              {isAdmin && <Patients />}
-              {!isAdmin && <Redirect to="/" />}
-            </>
-          )}
-        </Route>
-        <Route path="/cabinet" exact>
-          {!loading && (
-            <>
-              {isAdmin && <Cabinet />}
-              {!isAdmin && <Redirect to="/" />}
-            </>
-          )}
-        </Route>
-        <Route path="/parametres" exact>
-          {!loading && (
-            <>
-              {isAdmin && <Parameters />}
-              {!isAdmin && <Redirect to="/" />}
-            </>
-          )}
-        </Route>
-        <Route path="/addDoctor" exact>
-          {!loading && (
-            <>
-              {isAdmin && superAdmin && <AddDoctor />}
-              {!isAdmin && superAdmin && <Redirect to="/" />}
-            </>
-          )}
-        </Route>
-        <Route>
-          <div>
-            Page 404
-          </div>
-        </Route>
-      </Switch>
+      <Analytics id="UA-124274086-8" debug>
 
+        <Switch>
+          <Route path="/" exact>
+            {!loading && (
+              <>
+                {!isAdmin && <Admin />}
+                {isAdmin && <Redirect to="/planning" />}
+              </>
+            )}
+          </Route>
+          <Route path="/forgot-password" exact>
+            {!loading && (
+              <>
+                {!isAdmin && <Forgot />}
+                {isAdmin && <Redirect to="/planning" />}
+              </>
+            )}
+          </Route>
+          <Route path="/renew/:token" exact>
+            {!loading && (
+              <>
+                {!isAdmin && <Renew />}
+                {isAdmin && <Redirect to="/planning" />}
+              </>
+            )}
+          </Route>
+          <Route path="/planning" exact>
+            {!loading && (
+              <>
+                {isAdmin && <Planning />}
+                {!isAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/patients" exact>
+            {!loading && (
+              <>
+                {isAdmin && <Patients />}
+                {!isAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/cabinet" exact>
+            {!loading && (
+              <>
+                {isAdmin && <Cabinet />}
+                {!isAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/parametres" exact>
+            {!loading && (
+              <>
+                {isAdmin && <Parameters />}
+                {!isAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/addDoctor" exact>
+            {!loading && (
+              <>
+                {isAdmin && superAdmin && <AddDoctor />}
+                {!isAdmin && superAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/manageDoctor" exact>
+            {!loading && (
+              <>
+                {isAdmin && superAdmin && <ManageDoctor />}
+                {!isAdmin && superAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route path="/send" exact>
+            {!loading && (
+              <>
+                {isAdmin && superAdmin && <Send />}
+                {!isAdmin && superAdmin && <Redirect to="/" />}
+              </>
+            )}
+          </Route>
+          <Route>
+            <div>
+              Page 404
+            </div>
+          </Route>
+        </Switch>
+      </Analytics>
     </div>
   );
 };

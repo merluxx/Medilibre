@@ -25,6 +25,7 @@ import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Switch from '@material-ui/core/Switch';
 import DevicesOutlinedIcon from '@material-ui/icons/DevicesOutlined';
+import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
 
 import { CURRENT_SERVEUR_URL } from 'src/config';
 
@@ -103,7 +104,7 @@ const AdminHeader = ({
           >
             <Avatar
               style={{ marginBottom: '1rem', width: '70px', height: '70px' }}
-              src={`${CURRENT_SERVEUR_URL.substr(0, -6)}${doctorDatas.avatar}`}
+              src={`${CURRENT_SERVEUR_URL.substr(0, -6)}${doctorDatas.avatar}?random=${Math.floor(Math.random() * 10000)}`}
             />
             <div
               style={{
@@ -195,7 +196,14 @@ const AdminHeader = ({
           </List>
           <Divider />
           {doctorDatas.superAdmin && (
-            <List>
+            <List
+              onClick={() => {
+                setOpen(false);
+              }}
+              onKeyDown={() => {
+                setOpen(false);
+              }}
+            >
               <Link to="/addDoctor">
                 <ListItem
                   button
@@ -208,7 +216,7 @@ const AdminHeader = ({
                   </ListItemText>
                 </ListItem>
               </Link>
-              <Link to="/parametres">
+              <Link to="/manageDoctor">
                 <ListItem
                   button
                 >
@@ -217,6 +225,18 @@ const AdminHeader = ({
                   </ListItemIcon>
                   <ListItemText>
                     Gestion des utilisateurs
+                  </ListItemText>
+                </ListItem>
+              </Link>
+              <Link to="/send">
+                <ListItem
+                  button
+                >
+                  <ListItemIcon>
+                    <MailOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>
+                    Newsletter
                   </ListItemText>
                 </ListItem>
               </Link>

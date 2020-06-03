@@ -16,6 +16,8 @@ import parametersReducer from './parametersReducer';
 import forgotReducer from './forgotReducer';
 import renewReducer from './renewReducer';
 import addDoctorReducer from './addDoctorReducer';
+import manageDoctorReducer from './manageDoctorReducer';
+import sendReducer from './sendReducer';
 
 const rootReducer = combineReducers({
   main: mainReducer,
@@ -34,6 +36,8 @@ const rootReducer = combineReducers({
   forgot: forgotReducer,
   renew: renewReducer,
   addDoctor: addDoctorReducer,
+  manageDoctor: manageDoctorReducer,
+  send: sendReducer,
 });
 
 export default rootReducer;

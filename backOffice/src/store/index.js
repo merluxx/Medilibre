@@ -10,6 +10,8 @@ import parametersMiddleware from 'src/middlewares/parametersMiddleware';
 import forgotMiddleware from 'src/middlewares/forgotMiddleware';
 import renewMiddleware from 'src/middlewares/renewMiddleware';
 import addDoctorMiddleware from 'src/middlewares/addDoctorMiddleware';
+import manageDoctorMiddleware from 'src/middlewares/manageDoctorMiddleware';
+import sendMiddleware from 'src/middlewares/sendMiddleware';
 
 const enhancers = composeWithDevTools(
   applyMiddleware(
@@ -20,6 +22,8 @@ const enhancers = composeWithDevTools(
     forgotMiddleware,
     renewMiddleware,
     addDoctorMiddleware,
+    manageDoctorMiddleware,
+    sendMiddleware,
   ),
 );
 

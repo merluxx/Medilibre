@@ -8,6 +8,8 @@ const initialState = {
   phoneValue: '',
   errorPhone: false,
   open: false,
+  publicEmailValue: '',
+  errorPublicEmailValue: false,
 };
 
 const newUserReducer = (state = initialState, action = {}) => {

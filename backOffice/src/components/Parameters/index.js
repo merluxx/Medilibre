@@ -15,10 +15,21 @@ import { Redirect } from 'react-router-dom';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import MailOutlinedIcon from '@material-ui/icons/MailOutlined';
+
+import SessionTypes from 'src/containers/Parameters/SessionTypes';
 
 import './parameters.scss';
+
+const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -38,6 +49,13 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
 }));
 
 const Parameters = ({
@@ -56,9 +74,11 @@ const Parameters = ({
   passwordError,
   confirmPasswordError,
   submitNewPassword,
-  groupSessions,
-  groupSize,
   period,
+  sessionTypesDialogShow,
+  customMailTextDialog,
+  customMailText,
+  changeCustomMailText,
 }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -113,60 +133,73 @@ const Parameters = ({
               >
                 Modifier
               </Button>
+              <DialogTitle>
+                Personalisation des mails de confirmation
+              </DialogTitle>
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                startIcon={<MailOutlinedIcon />}
+                style={{
+                  alignSelf: 'center',
+                }}
+                onClick={() => {
+                  setParametersFields('customMailTextDialog', true);
+                }}
+              >
+                Personnaliser
+              </Button>
 
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <DialogTitle>
                   Paramètres des séances
                 </DialogTitle>
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  startIcon={<SettingsOutlinedIcon />}
+                  style={{
+                    alignSelf: 'center',
+                  }}
+                  onClick={() => {
+                    setParametersFields('sessionTypesDialogShow', true);
+                  }}
+                >
+                  Types de séances
+                </Button>
                 <DialogContent>
-                  <DialogContentText>
-                    Durée totale d'une séance
-                  </DialogContentText>
-                  <DialogContent className={classes.dialogContent}>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                      <TextField
-                        id="outlined-basic-duration"
-                        type="number"
-                        value={parseInt(duration, Number)}
-                        onChange={(event) => {
-                          let { value } = event.target;
-                          if (value < 0) {
-                            value = 0;
-                          }
-                          setParametersFields('duration', Number(value));
-                        }}
-                        label="Durée"
-                        variant="outlined"
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end">Min</InputAdornment>,
-                        }}
-                      />
-                    </FormControl>
-                  </DialogContent>
-                  <DialogContentText>
-                    Delai minimun entre deux début de séance
-                  </DialogContentText>
-                  <DialogContent className={classes.dialogContent}>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                      <TextField
-                        id="outlined-basic-frequency"
-                        type="number"
-                        value={parseInt(frequency, Number)}
-                        onChange={(event) => {
-                          let { value } = event.target;
-                          if (value < 0) {
-                            value = 0;
-                          }
-                          setParametersFields('frequency', Number(value));
-                        }}
-                        label="Delai"
-                        variant="outlined"
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end">Min</InputAdornment>,
-                        }}
-                      />
-                    </FormControl>
-                  </DialogContent>
+                  {!doctorDatas.sessionType && (
+                    <>
+                      <DialogContentText>
+                        Durée totale d'une séance
+                      </DialogContentText>
+                      <DialogContent className={classes.dialogContent}>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                          <TextField
+                            id="outlined-basic-duration"
+                            type="number"
+                            value={parseInt(duration, Number)}
+                            onChange={(event) => {
+                              let { value } = event.target;
+                              if (value < 0) {
+                                value = 0;
+                              }
+                              setParametersFields('duration', Number(value));
+                            }}
+                            label="Durée"
+                            variant="outlined"
+                            InputProps={{
+                              endAdornment: <InputAdornment position="end">Min</InputAdornment>,
+                            }}
+                          />
+                        </FormControl>
+                      </DialogContent>
+                    </>
+                  )}
                   <DialogContentText>
                     Delai minimum entre la prise d'un rendez-vous et le rdv
                   </DialogContentText>
@@ -215,46 +248,33 @@ const Parameters = ({
                       />
                     </FormControl>
                   </DialogContent>
-                  <DialogContentText>
-                    Séances de groupe
-                  </DialogContentText>
-                  <DialogContent>
-                    <FormControlLabel
-                      labelPlacement="end"
-                      control={(
-                        <Checkbox
-                          checked={groupSessions}
-                          onChange={(event) => {
-                            setParametersFields('groupSessions', event.target.checked);
-                          }}
-                          name="4"
-                          color="primary"
-                        />
-                        )}
-                      label="Autoriser les séances de groupe"
-                    />
-                  </DialogContent>
-                  {groupSessions && (
-                    <DialogContent>
-                      <TextField
-                        id="outlined-basic-fréquency"
-                        type="number"
-                        value={groupSize}
-                        onChange={(event) => {
-                          let value = Number(event.target.value);
-                          if (value < 0) {
-                            value = 0;
-                          }
-                          setParametersFields('groupSize', value);
-                        }}
-                        label="maximum de patients simultanés"
-                        variant="outlined"
-                      />
-                    </DialogContent>
-                  )}
                   <DialogTitle>
                     Affichage de l'agenda
                   </DialogTitle>
+                  <DialogContentText>
+                    Taille des "pas" de l'agenda
+                  </DialogContentText>
+                  <DialogContent className={classes.dialogContent}>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                      <TextField
+                        id="outlined-basic-frequency"
+                        type="number"
+                        value={parseInt(frequency, Number)}
+                        onChange={(event) => {
+                          let { value } = event.target;
+                          if (value < 1) {
+                            value = 1;
+                          }
+                          setParametersFields('frequency', Number(value));
+                        }}
+                        label="Delai"
+                        variant="outlined"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">Min</InputAdornment>,
+                        }}
+                      />
+                    </FormControl>
+                  </DialogContent>
                   <DialogContentText>
                     Amplitude de l'affichage
                   </DialogContentText>
@@ -309,6 +329,83 @@ const Parameters = ({
           )}
         </div>
       </div>
+      <Dialog
+        open={customMailTextDialog}
+        onClose={() => {
+          setParametersFields('customMailTextDialog', false);
+        }}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Personnalisation du mail de confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Veuillez entrer le texte du mail de confirmation de rendez-vous de vos patients
+          </DialogContentText>
+          <TextField
+            fullWidth
+            disabled
+            id="standard-multiline-disabled"
+            value={`Bonjour (prenom) (nom) \n 
+            Nous avons bien enregistré votre rendez-vous le (date) à (heure) avec ${doctorDatas.firstname} ${doctorDatas.lastname} votre ${doctorDatas.job}`}
+            multiline
+            rows={5}
+            inputProps={{ 'aria-label': 'naked' }}
+            variant="outlined"
+            style={{
+              marginBottom: '1rem',
+            }}
+          />
+          <TextField
+            fullWidth
+            id="standard-multiline-static"
+            label="Texte personnalisé"
+            multiline
+            rows={5}
+            variant="outlined"
+            value={customMailText}
+            onChange={(event) => {
+              setParametersFields('customMailText', event.target.value);
+            }}
+            style={{
+              marginBottom: '1rem',
+            }}
+          />
+          <TextField
+            fullWidth
+            disabled
+            id="standard-multiline-disabled"
+            value={`Pour consulter ou annuler vos rendez-vous connectez-vous sur l'historique de votre compte à l'adresse suivante:
+            https://medi-libre.fr/${doctorDatas.slug}`}
+            multiline
+            inputProps={{ 'aria-label': 'naked' }}
+            rows={5}
+            variant="outlined"
+            style={{
+              marginBottom: '1rem',
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setParametersFields('customMailTextDialog', false);
+            }}
+            color="primary"
+          >
+            Retour
+          </Button>
+          <Button
+            onClick={() => {
+              changeCustomMailText();
+              setParametersFields('customMailTextDialog', false);
+            }}
+            color="primary"
+            variant="contained"
+          >
+            Enregistrer
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Modification du mot de passe</DialogTitle>
         <DialogContent>
@@ -397,6 +494,43 @@ const Parameters = ({
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        fullScreen
+        onClose={() => {
+          setParametersFields('sessionTypesDialogShow', false);
+        }}
+        aria-labelledby="customized-dialog-title"
+        open={sessionTypesDialogShow}
+        TransitionComponent={Transition}
+      >
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => {
+                setParametersFields('sessionTypesDialogShow', false);
+              }}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Types de séances
+            </Typography>
+            <Button
+              autoFocus
+              color="inherit"
+              onClick={() => {
+                setParametersFields('addDialogShow', true);
+              }}
+            >
+              <AddCircleOutlineIcon />
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <SessionTypes />
+      </Dialog>
     </>
   );
 };
@@ -432,6 +566,10 @@ Parameters.propTypes = {
     PropTypes.number,
     PropTypes.string,
   ]).isRequired,
+  sessionTypesDialogShow: PropTypes.bool.isRequired,
+  customMailTextDialog: PropTypes.bool.isRequired,
+  customMailText: PropTypes.string.isRequired,
+  changeCustomMailText: PropTypes.func.isRequired,
 };
 
 export default Parameters;

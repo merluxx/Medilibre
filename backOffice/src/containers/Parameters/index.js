@@ -1,6 +1,11 @@
 import { connect } from 'react-redux';
 
-import { setParametersFields, submitParameters, submitNewPassword } from 'src/actions/parameters';
+import {
+  setParametersFields,
+  submitParameters,
+  submitNewPassword,
+  changeCustomMailText,
+} from 'src/actions/parameters';
 
 import Parameters from 'src/components/Parameters';
 
@@ -20,6 +25,9 @@ const mapStateToProps = (state) => ({
   groupSessions: state.parameters.groupSessions,
   groupSize: state.parameters.groupSize,
   period: state.parameters.period,
+  sessionTypesDialogShow: state.parameters.sessionTypesDialogShow,
+  customMailTextDialog: state.parameters.customMailTextDialog,
+  customMailText: state.parameters.customMailText,
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -32,6 +40,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   submitNewPassword: () => {
     dispatch(submitNewPassword());
+  },
+  changeCustomMailText: () => {
+    dispatch(changeCustomMailText());
   },
 });
 

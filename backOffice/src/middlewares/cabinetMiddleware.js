@@ -87,6 +87,7 @@ const cabinetMiddleware = (store) => (next) => (action) => {
         publicEmail: cabinet.contactEmail,
         phone: cabinet.phone,
         presentation: cabinet.presentation,
+        sessionType: store.getState().doctor.doctorDatas.sessionType,
       };
       Axios({
         method: 'put',
